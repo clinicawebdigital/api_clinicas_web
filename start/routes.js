@@ -10,5 +10,12 @@ Route.put('/indications/:id', 'IndicationController.update')
 Route.delete('/indications/:id', 'IndicationController.destroy')
 */
 
+Route.post('/schooling', 'SchoolingController.store')
+Route.get('/schooling', 'SchoolingController.index')
+// Route.get('/scholarity', 'ScholarityController.in')
+// Route.get('/scholarity', 'ScholarityController.index')
+// Route.get('/scholarity', 'ScholarityyController.index')
+
+
 Route.resource('indications', 'IndicationController').apiOnly()
     
