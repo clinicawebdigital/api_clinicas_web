@@ -10,11 +10,6 @@ Route.put('/indications/:id', 'IndicationController.update')
 Route.delete('/indications/:id', 'IndicationController.destroy')
 */
 
-Route.post('/schooling', 'SchoolingController.store')
-Route.get('/schooling', 'SchoolingController.index')
-Route.get('/schooling', 'SchoolingController.show')
-Route.get('/schooling', 'SchoolingController.update')
-Route.get('/schooling', 'SchoolingController.destroy')
-
+Route.resource('schooling', 'SchoolingController').apiOnly()
 Route.resource('indications', 'IndicationController').apiOnly()
     

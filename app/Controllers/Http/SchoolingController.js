@@ -3,47 +3,74 @@
 const Schooling = use('App/Models/Schooling')
 
 class SchoolingController {
-  
-  async index ({ request, response }) {
-    const { page } = request.get()
-    const schooling = await Indication.query().paginate(page)
+
+  async index() {
+    const schooling = await Schooling.all()
     return schooling
   }
 
-  async show ({ params, request, response, view }) {
-    try {
-      const schooling = await Schooling.findOrFail(params.id)
+  async store({ request, response }) {
+    const data = request.only(['name'])
+
+    const schoolingExists = await Schooling.findBy('name', data.name);
+
+    if (!schoolingExists) {
+      const schooling = await Schooling.create(data)
       return schooling
-    } catch(err) {
+    } else {
       return response
-      .status(err.status)
-      .send({ err: { message: 'Essa indicação não existe' } })
-    }
-  }
- 
-  async update ({ params, request, response }) {
-    try{
-      const schooling = await Schooling.findOrFail(params.id) 
-      const data = request.only(['name']) 
-      schooling.merge(data) 
-      await schooling.save(); 
-      return schooling
-    }catch(err){
-      return response
-      .status(err.status)
-      .send({ err: { message: 'Essa indicação não existe' } })
+        .status(401)
+        .send({ err: { message: 'Essa escolaridade já existe' } })
     }
   }
 
-  async destroy ({ params, request, response }) {
+  async show({ params, response }) {
+    try {
+      const schooling = await Schooling.findOrFail(params.id)
+      return schooling
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: 'Essa escolaridade não existe' } })
+    }
+  }
+
+  async update({ params, request, response }) {
+    try {
+
+      const schooling = await Schooling.findOrFail(params.id);
+
+      const data = request.only(['name'])
+      const schoolingExists = await Schooling.findBy('name', data.name);
+
+      if (!schoolingExists) {
+
+        schooling.merge(data)
+        await schooling.save();
+
+        return schooling
+      } else {
+        return response
+          .status(401)
+          .send({ err: { message: 'Essa escolaridade já existe' } })
+      }
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: 'Essa escolaridade não existe' } })
+    }
+
+  }
+
+  async destroy({ params, response }) {
     try {
       const schooling = await Schooling.findOrFail(params.id)
       await schooling.delete()
-    } catch(err) {
+    } catch (err) {
       return response
-      .status(err.status)
-      .send({ err: { message: 'Essa indicação não existe' } })
-    }  
+        .status(err.status)
+        .send({ err: { message: 'Essa escolaridade não existe' } })
+    }
   }
 }
 
