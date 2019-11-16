@@ -35,20 +35,14 @@ class IndicationController {
     try{
       const indication = await Indication.findOrFail(params.id) // indication do banco 
       const data = request.only(['name']) // dados do formulario
-
       indication.merge(data) // faz mesclagem
-
       await indication.save(); 
-
       return indication
-      
-
     }catch(err){
       return response
       .status(err.status)
       .send({ err: { message: 'Essa indicação não existe' } })
-    }
-     
+    }    
   }
 
   async destroy ({ params, request, response }) {
@@ -59,8 +53,7 @@ class IndicationController {
       return response
       .status(err.status)
       .send({ err: { message: 'Essa indicação não existe' } })
-    }
-   
+    }  
   }
 }
 
