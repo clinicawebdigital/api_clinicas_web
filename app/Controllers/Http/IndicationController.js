@@ -4,56 +4,72 @@ const Indication = use('App/Models/Indication')
 
 class IndicationController {
 
-  // request.only
-  // ?page=1 request.get
-  // params request.params
-
-  async index ({ request, response }) {
+  async index({ request }) {
     const { page } = request.get()
     const indications = await Indication.query().paginate(page)
     return indications
   }
 
-  async store ({ request, response }) {
+  async store({ request, response }) {
     const data = request.only(['name'])
-    const indication = await Indication.create(data)
-    return indication
-  }
-  
-  async show ({ params, request, response }) {
-    try {
-      const indication = await Indication.findOrFail(params.id)
+
+    const indicationExists = await Indication.findBy('name', data.name)
+
+    if (!indicationExists) {
+      const indication = await Indication.create(data)
       return indication
-    } catch(err) {
+    } else {
       return response
-      .status(err.status)
-      .send({ err: { message: 'Essa indicação não existe' } })
+        .status(400)
+        .send({ err: { message: 'Essa indicação já está cadastrada.' } })
     }
   }
 
-  async update ({ params, request, response }) {
-    try{
-      const indication = await Indication.findOrFail(params.id) // indication do banco 
-      const data = request.only(['name']) // dados do formulario
-      indication.merge(data) // faz mesclagem
-      await indication.save(); 
+  async show({ params, response }) {
+    try {
+      const indication = await Indication.findOrFail(params.id)
       return indication
-    }catch(err){
+    } catch (err) {
       return response
-      .status(err.status)
-      .send({ err: { message: 'Essa indicação não existe' } })
-    }    
+        .status(err.status)
+        .send({ err: { message: 'Essa indicação não existe.' } })
+    }
   }
 
-  async destroy ({ params, request, response }) {
+  async update({ params, request, response }) {
+    try {
+      const indication = await Indication.findOrFail(params.id)
+
+      const data = request.only(['name'])
+      const indicationExists = await Indication.findBy('name', data.name)
+
+      if (!indicationExists) {
+        indication.merge(data)
+
+        await indication.save();
+        return indication
+
+      } else {
+        return response
+          .status(400)
+          .send({ err: { message: 'Essa indicação já existe' } })
+      }
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: 'Essa indicação não existe' } })
+    }
+  }
+
+  async destroy({ params, response }) {
     try {
       const indication = await Indication.findOrFail(params.id)
       await indication.delete()
-    } catch(err) {
+    } catch (err) {
       return response
-      .status(err.status)
-      .send({ err: { message: 'Essa indicação não existe' } })
-    }  
+        .status(err.status)
+        .send({ err: { message: 'Essa indicação não existe' } })
+    }
   }
 }
 
