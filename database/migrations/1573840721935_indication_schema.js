@@ -7,7 +7,7 @@ class IndicationSchema extends Schema {
   up () {
     this.create('indications', (table) => {
       table.increments()
-      table.string("name")
+      table.string("name").notNullable()
       table.timestamps()
     })
   }
