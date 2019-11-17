@@ -19,7 +19,7 @@ class SchoolingController {
       return schooling
     } else {
       return response
-        .status(401)
+        .status(400)
         .send({ err: { message: 'Essa escolaridade já existe' } })
     }
   }
@@ -42,16 +42,16 @@ class SchoolingController {
 
       const data = request.only(['name'])
       const schoolingExists = await Schooling.findBy('name', data.name);
-
+      
       if (!schoolingExists) {
-
         schooling.merge(data)
+
         await schooling.save();
 
         return schooling
       } else {
         return response
-          .status(401)
+          .status(400)
           .send({ err: { message: 'Essa escolaridade já existe' } })
       }
     } catch (err) {
@@ -59,12 +59,12 @@ class SchoolingController {
         .status(err.status)
         .send({ err: { message: 'Essa escolaridade não existe' } })
     }
-
   }
 
   async destroy({ params, response }) {
     try {
       const schooling = await Schooling.findOrFail(params.id)
+      
       await schooling.delete()
     } catch (err) {
       return response
