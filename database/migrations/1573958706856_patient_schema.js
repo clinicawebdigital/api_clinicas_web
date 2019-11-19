@@ -3,6 +3,7 @@
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
 
+
 class PatientSchema extends Schema {
   up () {
     this.create('patients', (table) => {
@@ -14,7 +15,7 @@ class PatientSchema extends Schema {
       table.string('mother_name')
       table.string('gender')
       // documentos 
-      table.string('gender').unique()
+      table.string('cpf').unique()
       table.string('rg')
       table.boolean('responsible_document').defaultTo(false)
       table.text('observations')
@@ -22,13 +23,12 @@ class PatientSchema extends Schema {
       table.string('first_phone').notNullable()
       table.string('second_phone').notNullable()
       table.string('whatsapp')
-      table.timestamps()
       // dados sociais
       table
       .integer('indication_id')
       .unsigned()
       .references('id')
-      .inTable('indication')
+      .inTable('indications')
       .onUpdate('CASCADE')
       .onDelete('CASCADE')
       table.string('ocupacao')
@@ -46,7 +46,7 @@ class PatientSchema extends Schema {
       .integer('marital_status_id')
       .unsigned()
       .references('id')
-      .inTable('races')
+      .inTable('marital_status')
       .onUpdate('CASCADE')
       .onDelete('CASCADE')
       table
@@ -56,6 +56,7 @@ class PatientSchema extends Schema {
       .inTable('schooling')
       .onUpdate('CASCADE')
       .onDelete('CASCADE')
+      table.timestamps()
     })
   }
 

@@ -1,92 +1,115 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Patient = use('App/Models/Patient')
 
-/**
- * Resourceful controller for interacting with patients
- */
 class PatientController {
-  /**
-   * Show a list of all patients.
-   * GET patients
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
+
+  async index({ request, response }) {
+    const { page } = request.get()
+    const patients = Patient.query()
+      .select('id', 'fullname', 'cpf', 'date_birth', 'first_phone', 'second_phone')
+      .paginate(page)
+    return patients
   }
 
-  /**
-   * Render a form to be used for creating a new patient.
-   * GET patients/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+
+  async store({ request }) {
+    const data = request.only(['fullname', 'first_phone', 'second_phone', 'date_birth'])
+    const pacient = await Patient.create(data)
+    return pacient
   }
 
-  /**
-   * Create/save a new patient.
-   * POST patients
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
+  async show({ response, params }) {
+    try {
+      const patient = await Patient.findOrFail(params.id)
+      return patient
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: 'Esse paciente não existe.' } })
+    }
   }
 
-  /**
-   * Display a single patient.
-   * GET patients/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
+  async update({ params, response, request }) {
+    try {
+
+      const patient = await Patient.findOrFail(params.id)
+
+      const data = request.only(
+        [
+          'fullname',
+          'email',
+          'date_birth',
+          'father_name',
+          'mother_name',
+          'gender',
+          'cpf',
+          'rg',
+          'responsible_document',
+          'observations',
+          'first_phone',
+          'second_phone',
+          'whatsapp',
+          'indication_id',
+          'ocupacao',
+          'nacionalidade',
+          'instragram',
+          'facebook',
+          'race_id',
+          'marital_status_id',
+          'schooling_id'
+        ]
+      )
+
+      const address = request.only([
+        'cep',
+        'street',
+        'number',
+        'complement',
+        'neighborhood',
+        'county'
+      ])
+
+      if (data.cpf) {
+        const patientExists = await Patient.findBy('cpf', data.cpf)
+
+        if (!patientExists) {
+          patient.merge(data)
+          await patient.save()
+
+          await patient.patientsAddresses().createMany([address])
+
+          return patient
+        } else {
+          return response
+            .status(400)
+            .send({ err: { message: 'Esse CPF já está cadastrado.' } })
+        }
+      } else {
+        return response
+          .status(400)
+          .send({ err: { message: 'CPF é obrigatório.' } })
+      }
+
+
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: 'Esse paciente não existe.' } })
+    }
+
+
   }
 
-  /**
-   * Render a form to update an existing patient.
-   * GET patients/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
-
-  /**
-   * Update patient details.
-   * PUT or PATCH patients/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
-  }
-
-  /**
-   * Delete a patient with id.
-   * DELETE patients/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, response }) {
+    try {
+      const patient = await Patient.findOrFail(params.id)
+      await patient.delete()
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: 'Esse paciente não existe.' } })
+    }
   }
 }
 

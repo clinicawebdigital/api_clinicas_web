@@ -10,8 +10,9 @@ Route.put('/indications/:id', 'IndicationController.update')
 Route.delete('/indications/:id', 'IndicationController.destroy')
 */
 
+
 Route.resource('indications', 'IndicationController').apiOnly()
 Route.resource('schooling', 'SchoolingController').apiOnly()
 Route.resource('maritalStatus', 'MaritalStatusController').apiOnly()
 Route.resource('races', 'RaceController').apiOnly()
-    
+Route.resource('patients', 'PatientController').apiOnly()
