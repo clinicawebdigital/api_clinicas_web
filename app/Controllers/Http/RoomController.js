@@ -27,7 +27,34 @@ class RoomController {
   }
 
   async update ({ params, request, response }) {
-    
+    try{
+      const room = await Room.findOrFail(params.id)
+      const data = request.only('name','observations','active')
+      
+      if(data.name){
+        const roomExists = await Room.findBy('name', data.name)
+
+        if(!roomExists){
+          room.merge(data)
+          await room.save()
+          return room 
+        } else {
+          return response
+            .status(400)
+            .send({ err: { message: 'Esse nome de sala ja está cadastrado.' } })
+        }
+      } else {
+        return response
+          .status(400)
+          .send({ err: { message: 'O nome da sala é obrigatório.' } })
+      }
+
+      }
+    catch(err){
+      return response 
+        .status(err.status)
+        .send({ err: { message: 'Essa sala não existe'}})
+    }
   }
 
   async destroy ({ params, response }) {
