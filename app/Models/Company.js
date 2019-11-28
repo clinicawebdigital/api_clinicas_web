@@ -4,6 +4,10 @@
 const Model = use('Model')
 
 class Company extends Model {
+
+    openingHours () {
+        return this.hasMany('App/Models/OpeningHour')
+    }
 }
 
 module.exports = Company
