@@ -4,9 +4,9 @@ const Indication = use('App/Models/Indication')
 
 class IndicationController {
 
-  async index({ request }) {
-    const { page } = request.get()
-    const indications = await Indication.query().paginate(page)
+  async index({ request }) { 
+    const { page, term = ''  } = request.get()
+    const indications = await Indication.query().where("name","LIKE","%"+term+"%").fetch()
     return indications
   }
 
