@@ -15,7 +15,18 @@ class PatientController {
 
   async store({ request }) {
     const data = request.only(['fullname', 'first_phone', 'second_phone', 'date_birth'])
+    const address = request.only([
+      'cep',
+      'street',
+      'number',
+      'complement',
+      'neighborhood',
+      'county'
+    ])
     const pacient = await Patient.create(data)
+
+    await patient.patientsAddresses().createMany([address])
+
     return pacient
   }
 
@@ -61,14 +72,7 @@ class PatientController {
         ]
       )
 
-      const address = request.only([
-        'cep',
-        'street',
-        'number',
-        'complement',
-        'neighborhood',
-        'county'
-      ])
+   
 
       if (data.cpf) {
         const patientExists = await Patient.findBy('cpf', data.cpf)
@@ -77,7 +81,6 @@ class PatientController {
           patient.merge(data)
           await patient.save()
 
-          await patient.patientsAddresses().createMany([address])
 
           return patient
         } else {
