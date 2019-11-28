@@ -20,3 +20,6 @@ Route.resource('rooms', 'RoomController').apiOnly()
 
 Route.get('company/:id', 'CompanyController.show')
 Route.put('company/:id', 'CompanyController.update')
+
+Route.get('openingHours', 'OpeningHourController.index')
+Route.put('openingHours', 'OpeningHourController.update')
