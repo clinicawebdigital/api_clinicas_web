@@ -4,7 +4,7 @@
 const Schema = use('Schema')
 
 class CompanySchema extends Schema {
-  up () {
+  up() {
     this.create('companies', (table) => {
       table.increments()
       // dados da empresa
@@ -18,17 +18,17 @@ class CompanySchema extends Schema {
       table.string('street')
       table.string('number')
       table.string('neighborhood')
+      table.string('complement')
       table.string('county')
       // dados de contato da empresa
       table.string('telephone')
       table.string('cellphone')
       table.string('email')
-    
       table.timestamps()
     })
   }
 
-  down () {
+  down() {
     this.drop('companies')
   }
 }
