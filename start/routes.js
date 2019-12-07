@@ -23,3 +23,11 @@ Route.put('company/:id', 'CompanyController.update')
 
 Route.get('openingHours', 'OpeningHourController.index')
 Route.put('openingHours', 'OpeningHourController.update')
+
+
+Route.get('partnerships', 'PartnershipController.index')
+Route.get('partnerships/:id', 'PartnershipController.show')
+Route.post('partnerships', 'PartnershipController.store')
+Route.put('partnerships/:id/status', 'PartnershipController.status')
+
+Route.resource('procedures', 'ProcedureController').apiOnly()

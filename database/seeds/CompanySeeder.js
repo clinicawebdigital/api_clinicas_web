@@ -3,12 +3,12 @@
 const Company = use('App/Models/Company')
 
 class CompanySeeder {
-  async run () {
+  async run() {
     const company = await Company.create({
-     name: '',
+      name: '',
     })
 
-   await company.openingHours().createMany([
+    await company.openingHours().createMany([
       {
         day: '0',
         description: 'Domingo',
@@ -22,7 +22,7 @@ class CompanySeeder {
         end: '',
       },
       {
-        day: '2',
+        dawwy: '2',
         description: 'Terça-feira',
         start: '',
         end: '',
