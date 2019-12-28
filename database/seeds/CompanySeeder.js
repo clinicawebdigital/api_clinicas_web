@@ -22,7 +22,7 @@ class CompanySeeder {
         end: '',
       },
       {
-        dawwy: '2',
+        day: '2',
         description: 'Terça-feira',
         start: '',
         end: '',
