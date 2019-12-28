@@ -11,7 +11,6 @@ class OpeningHoursSchema extends Schema {
       table.string('description')
       table.string('start')
       table.string('end')
-      table.timestamps()
       table
       .integer('company_id')
       .unsigned()
@@ -19,6 +18,7 @@ class OpeningHoursSchema extends Schema {
       .inTable('companies')
       .onUpdate('CASCADE')
       .onDelete('CASCADE')
+      table.timestamps()
     })
   }
 
