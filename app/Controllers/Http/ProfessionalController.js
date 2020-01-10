@@ -11,12 +11,32 @@ class ProfessionalController {
       "professionals.name",
       "professionals.cpf",
       "professionals.first_phone",
-      "roles.name as role"
+      "roles.name as role",
+      "professionals.role_id"
     )
       .from("professionals")
       .innerJoin("roles", "professionals.role_id", "roles.id");
 
     return professionals;
+  }
+
+  async makeOptions() {
+    const professionals = await Database.select(
+      "professionals.id",
+      "professionals.name",
+      "ocupations.name as ocupation"
+    )
+      .from("professionals")
+      .innerJoin("ocupations", "professionals.ocupation_id", "ocupations.id");
+
+    const options = professionals.map(item => {
+      return {
+        value: item.id,
+        label: `${item.name} - ${item.ocupation}`
+      };
+    });
+
+    return options;
   }
 
   async store({ request }) {

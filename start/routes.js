@@ -34,12 +34,29 @@ Route.put("partnerships/:id/status", "PartnershipController.status");
 Route.resource("procedures", "ProcedureController").apiOnly();
 Route.put("procedures/:id/status", "ProcedureController.status");
 
+Route.post("proceduresProfessionals", "ProcedureProfessionalController.store");
+Route.get("proceduresProfessionals", "ProcedureProfessionalController.index");
+Route.delete(
+  "proceduresProfessionals/:id",
+  "ProcedureProfessionalController.destroy"
+);
+
 Route.get("roles", "RoleController.index");
 
 Route.get("ocupations", "OcupationController.index");
 Route.post("ocupations", "OcupationController.store");
 
+Route.get("professionals/options", "ProfessionalController.makeOptions");
 // Professionals routes
 Route.post("professionals", "ProfessionalController.store");
 Route.get("professionals", "ProfessionalController.index");
 Route.get("professionals/:id", "ProfessionalController.show");
+
+// professional Schedule Routes
+
+Route.resource(
+  "professionalSchedule",
+  "ProfessionalScheduleController"
+).apiOnly();
+
+Route.post("schedules", "ScheduleController.index");

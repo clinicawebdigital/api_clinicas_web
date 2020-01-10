@@ -26,10 +26,6 @@ class Patient extends Model {
   schooling() {
     return this.belongsTo("App/Models/Schooling");
   }
-
-  patientsAddresses() {
-    return this.hasMany("App/Models/PatientAddress");
-  }
 }
 
 module.exports = Patient;
