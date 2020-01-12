@@ -4,15 +4,11 @@ const Race = use("App/Models/Race");
 
 class RaceController {
   async index() {
-    const races = await Race.all();
-    const parseOptions = races.toJSON().map(race => {
-      return {
-        value: race.id,
-        label: race.name
-      };
-    });
+    const races = await Race.query()
+      .select("id as value", "name as label")
+      .fetch();
 
-    return parseOptions;
+    return races;
   }
 }
 
