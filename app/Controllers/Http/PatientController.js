@@ -2,42 +2,72 @@
 
 const Patient = use("App/Models/Patient");
 
+const ProcedureProfessional = use("App/Models/ProcedureProfessional");
+
 class PatientController {
-  async index({ request, response }) {
+  async index({ request }) {
     const { page } = request.get();
     const patients = Patient.query()
-      .select(
-        "id",
-        "fullname",
-        "cpf",
-        "date_birth",
-        "first_phone",
-        "second_phone"
-      )
-      .paginate(page);
+      .select("id", "name", "cpf", "date_birth", "first_phone", "second_phone")
+      .fetch(page);
     return patients;
+  }
+
+  async getMyProcedures({ request }) {
+    const { id_professional } = request.get();
+    const proceduresProfessionals = await ProcedureProfessional.query()
+      .where("professional_id", id_professional)
+      .with("professional")
+      .fetch();
   }
 
   async store({ request }) {
     const data = request.only([
-      "fullname",
+      "name",
+      "email",
+      "date_birth",
+      "age",
+      "father_name",
+      "mother_name",
+      "gender",
+      // documentos
+      "rg",
+      "cpf",
+      "responsible_document",
+      "observations",
+      // contatos
       "first_phone",
       "second_phone",
-      "date_birth"
-    ]);
-    const address = request.only([
+      "whatsapp",
+      // endereço
       "cep",
       "street",
       "number",
-      "complement",
       "neighborhood",
-      "county"
+      "county",
+      "complement",
+      // dados sociais
+      "indication_id",
+      "ocupation_id",
+      "nationality",
+      "instagram",
+      "facebook",
+      race_id,
+      "marital_status_id",
+      "schooling_id"
     ]);
-    const pacient = await Patient.create(data);
 
-    await patient.patientsAddresses().createMany([address]);
+    const patientExists = await Patient.findBy("cpf", data.cpf);
 
-    return pacient;
+    if (!patientExists) {
+      const pacient = await Patient.create(data);
+
+      return pacient;
+    } else {
+      return response
+        .status(400)
+        .send({ err: { message: "Esse paciente já está cadastrado." } });
+    }
   }
 
   async show({ response, params }) {
@@ -56,25 +86,33 @@ class PatientController {
       const patient = await Patient.findOrFail(params.id);
 
       const data = request.only([
-        "fullname",
+        "name",
         "email",
         "date_birth",
+        "age",
         "father_name",
         "mother_name",
-        "gender",
-        "cpf",
+        "genre",
+        // documentos
         "rg",
-        "responsible_document",
+        "cpf",
+        "responsible_rg",
         "observations",
+        // contatos
         "first_phone",
         "second_phone",
         "whatsapp",
-        "indication_id",
-        "ocupacao",
+        // endereço
+        "cep",
+        "street",
+        "number",
+        "neighborhood",
+        "county",
+        "complement",
+        // dados sociais
         "nacionalidade",
         "instragram",
         "facebook",
-        "race_id",
         "marital_status_id",
         "schooling_id"
       ]);
