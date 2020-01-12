@@ -32,6 +32,15 @@ class PartnershipController {
     return partnership;
   }
 
+  async options() {
+    const partnerships = Partnership.query()
+      .select("id as value", "name as label")
+      .where("status", "=", true)
+      .orderBy("id", "desc")
+      .fetch();
+    return partnerships;
+  }
+
   async show({ response, params }) {
     try {
       const partnership = await Partnership.findOrFail(params.id);
