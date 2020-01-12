@@ -33,7 +33,6 @@ class ProfessionalScheduleController {
 
     const startCompany = verifyScheduleExists.toJSON().start.split(":");
 
-    console.log(startCompany);
     const startInput = data.start.split(":");
 
     const currentDate = new Date();
@@ -111,7 +110,7 @@ class ProfessionalScheduleController {
       .andWhere("room_id", data.room_id)
       .fetch();
 
-    if (verifyScheduleExistsYourSelf) {
+    if (!verifyScheduleInDay) {
       return response.status(401).send({
         err: {
           message: "Esse horário já está ocupado"
