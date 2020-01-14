@@ -3,9 +3,9 @@
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use("Schema");
 
-class CreditorDebtorSchema extends Schema {
+class MovementCategorySchema extends Schema {
   up() {
-    this.create("creditors_debtors", table => {
+    this.create("movement_categories", table => {
       table.increments();
       table.string("name");
       table.timestamps();
@@ -13,8 +13,8 @@ class CreditorDebtorSchema extends Schema {
   }
 
   down() {
-    this.drop("creditors_debtors");
+    this.drop("movement_categories");
   }
 }
 
-module.exports = CreditorDebtorSchema;
+module.exports = MovementCategorySchema;

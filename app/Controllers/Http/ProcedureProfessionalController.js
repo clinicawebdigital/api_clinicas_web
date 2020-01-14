@@ -1,13 +1,13 @@
 "use strict";
 
 const ProcedureProfessional = use("App/Models/ProcedureProfessional");
+const Database = use("Database");
 
 class ProcedureProfessionalController {
   async index({ request }) {
     const { id } = request.get();
     const proceduresProfessionals = await ProcedureProfessional.query()
       .where("procedure_id", id)
-
       .with("professional", builder => {
         builder.with("ocupation");
       })
@@ -22,6 +22,23 @@ class ProcedureProfessionalController {
     });
 
     return parseData;
+  }
+
+  async getProceduresProfissionals({ request }) {
+    const { id: partnership_id, id_prof: professional_id } = request.get();
+
+    // procedimentos do professional
+    const subquery = Database.from("procedures").where(
+      "partnership_id",
+      partnership_id
+    );
+
+    const result = await Database.from("procedure_professionals").whereIn(
+      "procedure_id",
+      subquery
+    );
+
+    return result;
   }
 
   async store({ request, response }) {

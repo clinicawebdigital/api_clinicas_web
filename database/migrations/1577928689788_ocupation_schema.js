@@ -7,7 +7,7 @@ class OcupationSchema extends Schema {
   up() {
     this.create("ocupations", table => {
       table.increments();
-      table.string("name").unique();
+      table.string("name");
       table.timestamps();
     });
   }

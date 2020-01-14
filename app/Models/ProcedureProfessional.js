@@ -7,6 +7,9 @@ class ProcedureProfessional extends Model {
   professional() {
     return this.belongsTo("App/Models/Professional");
   }
+  procedure() {
+    return this.belongsTo("App/Models/Procedure");
+  }
 }
 
 module.exports = ProcedureProfessional;

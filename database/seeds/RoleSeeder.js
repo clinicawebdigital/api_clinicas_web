@@ -1,6 +1,8 @@
 "use strict";
 
 const Role = use("App/Models/Role");
+const Professional = use("App/Models/Professional");
+const User = use("App/Models/User");
 
 class RoleSeeder {
   async run() {
@@ -27,6 +29,17 @@ class RoleSeeder {
       }
     ];
     await Role.createMany(data);
+
+    const { id } = await Professional.create({
+      name: "Senhor admin",
+      role_id: 1
+    });
+
+    const user = await User.create({
+      username: "admin",
+      password: "secret",
+      professional_id: id
+    });
   }
 }
 

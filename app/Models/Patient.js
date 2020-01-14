@@ -1,18 +1,15 @@
 "use strict";
 
-/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use("Model");
+const { addMinutes, format, getISODay, parseISO } = require("date-fns");
 
 class Patient extends Model {
-  static formatDates(field, value) {
-    if (field === "date_birth") {
-      return value.format("DD-MM-YYYY");
-    }
-    return super.formatDates(field, value);
-  }
-
   indication() {
     return this.belongsTo("App/Models/Indication");
+  }
+
+  getDateBirth(date) {
+    return format(date, "dd/MM/YYYY");
   }
 
   race() {

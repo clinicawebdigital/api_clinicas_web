@@ -14,14 +14,15 @@ class ScheduleController {
     // seleciona a data selecionada
     const data = request.only(["date"]);
 
-    console.log(data);
-
     // pegar o número do dia selecionado
     const currentIsoDay = await getISODay(parseISO(data.date), options);
 
     // pega os agendamento já existente do dia selecionada
+
+    const currentDate = new Date();
+
     const currentSchedule = await Schedule.query()
-      .where("date", "2020-01-09")
+      .where("date", currentDate)
       .with("professional")
       .with("room")
       .with("procedure", builder => builder.with("partnership"))
@@ -35,7 +36,6 @@ class ScheduleController {
       .fetch();
 
     const newSchedule = [];
-    const currentDate = new Date();
 
     const parseData = currentDoctorSchedule.toJSON();
 
@@ -102,7 +102,7 @@ class ScheduleController {
         item.procedure =
           verify.procedure.partnership.name + " - " + verify.procedure.name;
       } else {
-        item.checked = "Disponível";
+        item.checked = "Liberado";
         item.room = "";
         item.date = "";
         item.procedure = "";

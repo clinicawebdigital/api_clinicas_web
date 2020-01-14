@@ -15,6 +15,15 @@ class RoomController {
     return room;
   }
 
+  async options() {
+    const options = await Room.query()
+      .select("id as value", "name as label")
+      .where("active", true)
+      .fetch();
+
+    return options;
+  }
+
   async show({ params }) {
     try {
       const room = await Room.findOrFail(params.id);

@@ -2,22 +2,25 @@
 
 const Route = use("Route");
 
-/*
-Route.post('/indications', 'IndicationController.store')
-Route.get('/indications', 'IndicationController.index')
-Route.get('/indications/:id', 'IndicationController.show')
-Route.put('/indications/:id', 'IndicationController.update')
-Route.delete('/indications/:id', 'IndicationController.destroy')
-*/
+// autenticação
 
-Route.resource("indications", "IndicationController").apiOnly();
-Route.resource("schooling", "SchoolingController").apiOnly();
-Route.resource("maritalStatus", "MaritalStatusController").apiOnly();
-Route.resource("races", "RaceController").apiOnly();
-Route.resource("patients", "PatientController").apiOnly();
+Route.post("users", "UserController.index");
+Route.get("users/:id", "UserController.show");
+Route.put("users/:id", "UserController.update");
 
-Route.resource("rooms", "RoomController").apiOnly();
-Route.put("rooms/:id/status", "RoomController.status");
+Route.post("sessions", "SessionController.store");
+// Rotas complementares - Retorna um objeto com value e
+
+Route.get("indications", "IndicationController.index");
+Route.post("indications", "IndicationController.store");
+Route.get("schooling", "SchoolingController.index");
+Route.get("maritalStatus", "MaritalStatusController.index");
+Route.get("races", "RaceController.index");
+
+Route.get("ocupations", "OcupationController.index");
+Route.post("ocupations", "OcupationController.store");
+
+// Fluxo do sistema - obrigatório
 
 Route.get("company/:id", "CompanyController.show");
 Route.put("company/:id", "CompanyController.update");
@@ -25,11 +28,21 @@ Route.put("company/:id", "CompanyController.update");
 Route.get("openingHours", "OpeningHourController.index");
 Route.put("openingHours", "OpeningHourController.update");
 
+Route.get("rooms/options", "RoomController.options");
+Route.resource("patients", "PatientController").apiOnly();
+Route.resource("rooms", "RoomController").apiOnly();
+Route.put("rooms/:id/status", "RoomController.status");
+
 Route.get("partnerships", "PartnershipController.index");
+Route.get("partnerships/options", "PartnershipController.options");
 Route.get("partnerships/:id", "PartnershipController.show");
 Route.post("partnerships", "PartnershipController.store");
 Route.put("partnerships/:id", "PartnershipController.update");
 Route.put("partnerships/:id/status", "PartnershipController.status");
+Route.get(
+  "partnershipsProfessionals",
+  "ProcedureProfessionalController.getProceduresProfissionals"
+);
 
 Route.resource("procedures", "ProcedureController").apiOnly();
 Route.put("procedures/:id/status", "ProcedureController.status");
@@ -43,12 +56,10 @@ Route.delete(
 
 Route.get("roles", "RoleController.index");
 
-Route.get("ocupations", "OcupationController.index");
-Route.post("ocupations", "OcupationController.store");
-
 Route.get("professionals/options", "ProfessionalController.makeOptions");
 // Professionals routes
 Route.post("professionals", "ProfessionalController.store");
+Route.put("professionals/:id", "ProfessionalController.update");
 Route.get("professionals", "ProfessionalController.index");
 Route.get("professionals/:id", "ProfessionalController.show");
 
@@ -60,3 +71,19 @@ Route.resource(
 ).apiOnly();
 
 Route.post("schedules", "ScheduleController.index");
+
+// Rotas do Financeiro
+
+Route.resource("financials", "FinancialController").apiOnly();
+
+Route.get("accounts/options", "AccountController.options");
+Route.resource("accounts", "AccountController").apiOnly();
+
+Route.get("types/options", "TypeController.options");
+
+Route.post("movementCategories", "MovementCategoryController.store");
+Route.get("movementCategories/options", "MovementCategoryController.options");
+
+Route.get("creditorsDebtors", "CreditorDebtorController.index");
+Route.get("creditorsDebtors/options", "CreditorDebtorController.options");
+Route.post("creditorsDebtors", "CreditorDebtorController.store");

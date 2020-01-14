@@ -52,7 +52,7 @@ class PatientController {
       "nationality",
       "instagram",
       "facebook",
-      race_id,
+      "race_id",
       "marital_status_id",
       "schooling_id"
     ]);
@@ -92,11 +92,11 @@ class PatientController {
         "age",
         "father_name",
         "mother_name",
-        "genre",
+        "gender",
         // documentos
         "rg",
         "cpf",
-        "responsible_rg",
+        "responsible_document",
         "observations",
         // contatos
         "first_phone",
@@ -110,9 +110,12 @@ class PatientController {
         "county",
         "complement",
         // dados sociais
-        "nacionalidade",
-        "instragram",
+        "indication_id",
+        "ocupation_id",
+        "nationality",
+        "instagram",
         "facebook",
+        "race_id",
         "marital_status_id",
         "schooling_id"
       ]);

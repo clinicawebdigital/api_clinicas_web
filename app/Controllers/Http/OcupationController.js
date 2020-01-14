@@ -3,16 +3,15 @@
 const Ocupation = use("App/Models/Ocupation");
 
 class OcupationController {
-  async index() {
-    const ocupations = await Ocupation.all();
-    const parseOptions = ocupations.toJSON().map(ocupation => {
-      return {
-        value: ocupation.id,
-        label: ocupation.name
-      };
-    });
+  async index({ request }) {
+    const { term = "" } = request.get();
 
-    return parseOptions;
+    const ocupations = await Ocupation.query()
+      .select("id as value", "name as label")
+      .whereRaw(`name LIKE '%${term}%'`)
+      .fetch();
+
+    return ocupations;
   }
 
   async store({ request, response }) {

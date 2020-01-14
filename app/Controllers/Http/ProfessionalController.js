@@ -27,6 +27,7 @@ class ProfessionalController {
       "ocupations.name as ocupation"
     )
       .from("professionals")
+      .where("can_selected", true)
       .innerJoin("ocupations", "professionals.ocupation_id", "ocupations.id");
 
     const options = professionals.map(item => {
@@ -91,7 +92,45 @@ class ProfessionalController {
     }
   }
 
-  async update({ params, request, response }) {}
+  async update({ params, request, response }) {
+    try {
+      const data = request.only([
+        "role_id",
+        // dados do profissional
+        "name",
+        "email",
+        "date_birth",
+        "sexo",
+        "council",
+        "registration_number",
+        "ocupation_id",
+        "cpf",
+        // permissões
+        "can_selected",
+        "can_schedule",
+        // dados de residência
+        "cep",
+        "street",
+        "number",
+        "neighborhood",
+        "county",
+        "complement",
+        // dados de contato
+        "first_phone",
+        "second_phone",
+        // dados de login
+
+        // curriculum
+        "curriculum"
+      ]);
+
+      const professional = await Professional.findOrFail(params.id);
+
+      professional.merge(data);
+      await professional.save();
+      return professional;
+    } catch (error) {}
+  }
 
   async destroy({ params, request, response }) {}
 }

@@ -1,52 +1,52 @@
-'use strict'
+"use strict";
 
-const Company = use('App/Models/Company')
+const Company = use("App/Models/Company");
 
 class CompanyController {
-
   async show({ params, response }) {
     try {
-      const company = await Company.findOrFail(params.id)
-      return company
+      const company = await Company.findOrFail(params.id);
+      return company;
     } catch (err) {
       return response
         .status(err.status)
-        .send({ err: { message: 'Essa empresa nao está presente no banco de dados.' } })
+        .send({
+          err: { message: "Essa empresa nao está presente no banco de dados." }
+        });
     }
   }
 
   async update({ params, request, response }) {
     try {
-      const company = await Company.findOrFail(params.id)
-      const data = request.only(
-        [
-          'name',
-          'company_name',
-          'cnpj',
-          'cnes',
-          'street',
-          'number',
-          'neighborhood',
-          'cep',
-          'telephone',
-          'cellphone',
-          'email',
-          'county',
-          'logo_url'
-        ])
+      const company = await Company.findOrFail(params.id);
+      const data = request.only([
+        "name",
+        "company_name",
+        "cnpj",
+        "cnes",
+        "street",
+        "number",
+        "neighborhood",
+        "cep",
+        "telephone",
+        "cellphone",
+        "email",
+        "county",
+        "logo_url",
+        "complement"
+      ]);
 
-      company.merge(data)
-      await company.save()
-      return company
-
+      company.merge(data);
+      await company.save();
+      return company;
     } catch (err) {
       return response
         .status(err.status)
-        .send({ err: { message: 'Essa empresa nao está presente no banco de dados.' } })
+        .send({
+          err: { message: "Essa empresa nao está presente no banco de dados." }
+        });
     }
   }
-
-
 }
 
-module.exports = CompanyController
+module.exports = CompanyController;
