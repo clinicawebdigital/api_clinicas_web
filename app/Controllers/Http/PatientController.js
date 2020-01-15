@@ -2,26 +2,36 @@
 
 const Patient = use("App/Models/Patient");
 
-const ProcedureProfessional = use("App/Models/ProcedureProfessional");
+const { format } = require("date-fns");
 
 class PatientController {
   async index({ request }) {
     const { page } = request.get();
-    const patients = Patient.query()
+    const patients = await Patient.query()
       .select("id", "name", "cpf", "date_birth", "first_phone", "second_phone")
       .fetch(page);
     return patients;
   }
 
-  async getMyProcedures({ request }) {
-    const { id_professional } = request.get();
-    const proceduresProfessionals = await ProcedureProfessional.query()
-      .where("professional_id", id_professional)
-      .with("professional")
+  async options() {
+    const options = await Patient.query()
+      .select("id as value ", "name as label", "date_birth", "first_phone")
       .fetch();
+
+    const parseOptions = options.toJSON().map(option => {
+      return {
+        value: option.value,
+        label: `${option.label} - ${format(
+          option.date_birth,
+          "dd/MM/yyyy"
+        )} | ${option.first_phone}`
+      };
+    });
+
+    return parseOptions;
   }
 
-  async store({ request }) {
+  async store({ request, response }) {
     const data = request.only([
       "name",
       "email",
@@ -57,17 +67,9 @@ class PatientController {
       "schooling_id"
     ]);
 
-    const patientExists = await Patient.findBy("cpf", data.cpf);
+    const pacient = await Patient.create(data);
 
-    if (!patientExists) {
-      const pacient = await Patient.create(data);
-
-      return pacient;
-    } else {
-      return response
-        .status(400)
-        .send({ err: { message: "Esse paciente já está cadastrado." } });
-    }
+    return pacient;
   }
 
   async show({ response, params }) {
