@@ -29,9 +29,11 @@ Route.get("openingHours", "OpeningHourController.index");
 Route.put("openingHours", "OpeningHourController.update");
 
 Route.get("rooms/options", "RoomController.options");
-Route.resource("patients", "PatientController").apiOnly();
 Route.resource("rooms", "RoomController").apiOnly();
 Route.put("rooms/:id/status", "RoomController.status");
+
+Route.get("patients/options", "PatientController.options");
+Route.resource("patients", "PatientController").apiOnly();
 
 Route.get("partnerships", "PartnershipController.index");
 Route.get("partnerships/options", "PartnershipController.options");
@@ -49,6 +51,11 @@ Route.put("procedures/:id/status", "ProcedureController.status");
 
 Route.post("proceduresProfessionals", "ProcedureProfessionalController.store");
 Route.get("proceduresProfessionals", "ProcedureProfessionalController.index");
+Route.get("proceduresProfessionals", "ProcedureProfessionalController.options");
+Route.get(
+  "proceduresProfessionals/options",
+  "ProcedureProfessionalController.options"
+);
 Route.delete(
   "proceduresProfessionals/:id",
   "ProcedureProfessionalController.destroy"

@@ -20,8 +20,11 @@ class IndicationController {
     const indicationExists = await Indication.findBy("name", data.name);
 
     if (!indicationExists) {
-      const indication = await Indication.create(data);
-      return indication;
+      const { id, name } = await Indication.create(data);
+      return {
+        value: id,
+        label: name
+      };
     } else {
       return response
         .status(400)

@@ -8,10 +8,6 @@ class Patient extends Model {
     return this.belongsTo("App/Models/Indication");
   }
 
-  getDateBirth(date) {
-    return format(date, "dd/MM/YYYY");
-  }
-
   race() {
     return this.belongsTo("App/Models/Race");
   }

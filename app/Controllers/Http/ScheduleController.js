@@ -33,6 +33,7 @@ class ScheduleController {
     const currentDoctorSchedule = await ProfessionalSchedule.query()
       .where("day", currentIsoDay)
       .with("professional")
+      .with("room")
       .fetch();
 
     const newSchedule = [];
@@ -67,7 +68,9 @@ class ScheduleController {
             options
           }),
           professional_name: item.professional.name,
-          professional_id: item.professional.id
+          professional_id: item.professional.id,
+          room_id: item.room.id,
+          room: item.room.name
         });
         const parseDate = addMinutes(
           new Date(
@@ -103,7 +106,6 @@ class ScheduleController {
           verify.procedure.partnership.name + " - " + verify.procedure.name;
       } else {
         item.checked = "Liberado";
-        item.room = "";
         item.date = "";
         item.procedure = "";
       }

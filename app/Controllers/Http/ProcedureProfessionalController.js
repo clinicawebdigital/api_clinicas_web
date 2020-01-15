@@ -24,21 +24,25 @@ class ProcedureProfessionalController {
     return parseData;
   }
 
-  async getProceduresProfissionals({ request }) {
-    const { id: partnership_id, id_prof: professional_id } = request.get();
+  async options({ request }) {
+    const { professional_id, partnership_id } = request.get();
 
-    // procedimentos do professional
-    const subquery = Database.from("procedures").where(
-      "partnership_id",
-      partnership_id
-    );
+    const options = await Database.select("*")
+      .table("procedure_professionals")
+      .innerJoin("procedures", function() {
+        this.on("procedures.id", "procedure_professionals.procedure_id");
+      })
+      .where("professional_id", professional_id)
+      .andWhere("partnership_id", partnership_id);
 
-    const result = await Database.from("procedure_professionals").whereIn(
-      "procedure_id",
-      subquery
-    );
+    const parseOptions = options.map(option => {
+      return {
+        value: option.procedure_id,
+        label: option.name
+      };
+    });
 
-    return result;
+    return parseOptions;
   }
 
   async store({ request, response }) {
