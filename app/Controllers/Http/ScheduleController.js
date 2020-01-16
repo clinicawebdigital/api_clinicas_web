@@ -106,6 +106,9 @@ class ScheduleController {
       /* busca o responsabel */
 
       if (verify) {
+        item.responsible = "";
+        item.value_payment = verify.value_payment;
+        item.observations_payment = verify.observations_payment;
         item.id = verify.id;
         item.status = verify.status;
         item.room = verify.room.name;
@@ -114,13 +117,22 @@ class ScheduleController {
         });
 
         item.procedure =
-          verify.procedure.partnership.name + " - " + verify.procedure.name;
+          verify.procedure.partnership.name +
+          " - " +
+          verify.procedure.name +
+          " | " +
+          new Intl.NumberFormat("pt-br", {
+            style: "currency",
+            currency: "BRL"
+          }).format(verify.procedure.value);
         item.created_at = format(new Date(verify.created_at), "dd/MM/yyyy", {
           options
         });
         item.first_phone = verify.patient.first_phone;
         item.key = Math.random();
+        item.observations = verify.observations;
       } else {
+        item.responsible = "";
         item.id = null;
         item.status = "Liberado";
         item.date = "";
@@ -128,6 +140,9 @@ class ScheduleController {
         item.created_at = "";
         item.first_phone = "";
         item.key = Math.random();
+        item.observations = "";
+        item.value_payment = "";
+        item.observations_payment = "";
       }
 
       return item;
