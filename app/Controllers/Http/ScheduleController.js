@@ -8,15 +8,14 @@ const { format } = require("date-fns-tz");
 const { addMinutes, getISODay, parseISO } = require("date-fns");
 const { ptBR } = require("date-fns/locale");
 
+const options = { locale: ptBR };
+
 class ScheduleController {
   async index({ request }) {
     // configuração globais
-    const options = { locale: ptBR };
 
     // seleciona a data selecionada
     const data = request.only(["date", "professional_id"]);
-
-    console.log(data);
 
     // pegar o número do dia selecionado
     const currentIsoDay = await getISODay(parseISO(data.date), options);
@@ -137,6 +136,50 @@ class ScheduleController {
     return newSchedule;
   }
 
+  async mySchedules({ request, auth }) {
+    // configuração globais
+
+    const user = await auth.getUser();
+    // seleciona a data selecionada
+    const data = request.only(["date"]);
+
+    // pegar o número do dia selecionado
+
+    // pega os agendamento já existente do dia selecionada
+
+    const currentSchedule = await Schedule.query()
+      .where("date", data.date)
+      .andWhere("professional_id", user.id)
+      .with("professional")
+      .with("room")
+      .with("patient")
+      .with("procedure", builder => builder.with("partnership"))
+      .fetch();
+
+    const parseOptions = currentSchedule.toJSON().map(item => {
+      item.id = item.id;
+      item.status = item.status;
+      item.room = item.room.name;
+      item.date = format(item.date, "dd/MM/yyyy", {
+        options
+      });
+
+      item.procedure =
+        item.procedure.partnership.name + " - " + item.procedure.name;
+      item.created_at = format(new Date(item.created_at), "dd/MM/yyyy", {
+        options
+      });
+      item.first_phone = item.patient.first_phone;
+      item.key = Math.random();
+      item.professional_name = item.professional.name;
+
+      return item;
+    });
+    // pega as agenda dos médicos desse dia
+
+    return parseOptions;
+  }
+
   async store({ request, auth }) {
     const data = request.only([
       "patient_id",
@@ -191,6 +234,23 @@ class ScheduleController {
       schedule.merge({
         ...data,
         status: "Autorizado"
+      });
+
+      await schedule.save();
+      return schedule;
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: "Esse agendamento não existente." } });
+    }
+  }
+
+  async handleEnd({ params, request, response }) {
+    try {
+      const schedule = await Schedule.findOrFail(params.id);
+
+      schedule.merge({
+        status: "Finalizado"
       });
 
       await schedule.save();

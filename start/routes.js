@@ -91,8 +91,12 @@ Route.group(() => {
     "schedules/authorization/:id",
     "ScheduleController.handleAuthorization"
   );
+
+  Route.put("schedules/end/:id", "ScheduleController.handleEnd");
+
   Route.post("schedules", "ScheduleController.index");
   Route.post("schedules/new", "ScheduleController.store");
+  Route.post("mySchedules", "ScheduleController.mySchedules");
 
   // Rotas do Financeiro
 
