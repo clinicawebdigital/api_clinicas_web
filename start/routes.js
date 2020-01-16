@@ -4,93 +4,112 @@ const Route = use("Route");
 
 // autenticação
 
-Route.post("users", "UserController.index");
-Route.get("users/:id", "UserController.show");
-Route.put("users/:id", "UserController.update");
-
 Route.post("sessions", "SessionController.store");
-// Rotas complementares - Retorna um objeto com value e
 
-Route.get("indications", "IndicationController.index");
-Route.post("indications", "IndicationController.store");
-Route.get("schooling", "SchoolingController.index");
-Route.get("maritalStatus", "MaritalStatusController.index");
-Route.get("races", "RaceController.index");
+Route.group(() => {
+  Route.post("users", "UserController.index");
+  Route.get("users/:id", "UserController.show");
+  Route.put("users/:id", "UserController.update");
 
-Route.get("ocupations", "OcupationController.index");
-Route.post("ocupations", "OcupationController.store");
+  // Rotas complementares - Retorna um objeto com value e
 
-// Fluxo do sistema - obrigatório
+  Route.get("indications", "IndicationController.index");
+  Route.post("indications", "IndicationController.store");
+  Route.get("schooling", "SchoolingController.index");
+  Route.get("maritalStatus", "MaritalStatusController.index");
+  Route.get("races", "RaceController.index");
 
-Route.get("company/:id", "CompanyController.show");
-Route.put("company/:id", "CompanyController.update");
+  Route.get("ocupations", "OcupationController.index");
+  Route.post("ocupations", "OcupationController.store");
 
-Route.get("openingHours", "OpeningHourController.index");
-Route.put("openingHours", "OpeningHourController.update");
+  // Fluxo do sistema - obrigatório
 
-Route.get("rooms/options", "RoomController.options");
-Route.resource("rooms", "RoomController").apiOnly();
-Route.put("rooms/:id/status", "RoomController.status");
+  Route.get("company/:id", "CompanyController.show");
+  Route.put("company/:id", "CompanyController.update");
 
-Route.get("patients/options", "PatientController.options");
-Route.resource("patients", "PatientController").apiOnly();
+  Route.get("openingHours", "OpeningHourController.index");
+  Route.put("openingHours", "OpeningHourController.update");
 
-Route.get("partnerships", "PartnershipController.index");
-Route.get("partnerships/options", "PartnershipController.options");
-Route.get("partnerships/:id", "PartnershipController.show");
-Route.post("partnerships", "PartnershipController.store");
-Route.put("partnerships/:id", "PartnershipController.update");
-Route.put("partnerships/:id/status", "PartnershipController.status");
-Route.get(
-  "partnershipsProfessionals",
-  "ProcedureProfessionalController.getProceduresProfissionals"
-);
+  Route.get("rooms/options", "RoomController.options");
+  Route.resource("rooms", "RoomController").apiOnly();
+  Route.put("rooms/:id/status", "RoomController.status");
 
-Route.resource("procedures", "ProcedureController").apiOnly();
-Route.put("procedures/:id/status", "ProcedureController.status");
+  Route.get("patients/options", "PatientController.options");
+  Route.resource("patients", "PatientController").apiOnly();
 
-Route.post("proceduresProfessionals", "ProcedureProfessionalController.store");
-Route.get("proceduresProfessionals", "ProcedureProfessionalController.index");
-Route.get("proceduresProfessionals", "ProcedureProfessionalController.options");
-Route.get(
-  "proceduresProfessionals/options",
-  "ProcedureProfessionalController.options"
-);
-Route.delete(
-  "proceduresProfessionals/:id",
-  "ProcedureProfessionalController.destroy"
-);
+  Route.get("partnerships", "PartnershipController.index");
+  Route.get("partnerships/options", "PartnershipController.options");
+  Route.get("partnerships/:id", "PartnershipController.show");
+  Route.post("partnerships", "PartnershipController.store");
+  Route.put("partnerships/:id", "PartnershipController.update");
+  Route.put("partnerships/:id/status", "PartnershipController.status");
+  Route.get(
+    "partnershipsProfessionals",
+    "ProcedureProfessionalController.getProceduresProfissionals"
+  );
 
-Route.get("roles", "RoleController.index");
+  Route.resource("procedures", "ProcedureController").apiOnly();
+  Route.put("procedures/:id/status", "ProcedureController.status");
 
-Route.get("professionals/options", "ProfessionalController.makeOptions");
-// Professionals routes
-Route.post("professionals", "ProfessionalController.store");
-Route.put("professionals/:id", "ProfessionalController.update");
-Route.get("professionals", "ProfessionalController.index");
-Route.get("professionals/:id", "ProfessionalController.show");
+  Route.post(
+    "proceduresProfessionals",
+    "ProcedureProfessionalController.store"
+  );
+  Route.get("proceduresProfessionals", "ProcedureProfessionalController.index");
+  Route.get(
+    "proceduresProfessionals",
+    "ProcedureProfessionalController.options"
+  );
+  Route.get(
+    "proceduresProfessionals/options",
+    "ProcedureProfessionalController.options"
+  );
+  Route.delete(
+    "proceduresProfessionals/:id",
+    "ProcedureProfessionalController.destroy"
+  );
 
-// professional Schedule Routes
+  Route.get("roles", "RoleController.index");
 
-Route.resource(
-  "professionalSchedule",
-  "ProfessionalScheduleController"
-).apiOnly();
+  Route.get("professionals/options", "ProfessionalController.makeOptions");
+  // Professionals routes
+  Route.post("professionals", "ProfessionalController.store");
+  Route.put("professionals/:id", "ProfessionalController.update");
+  Route.get("professionals", "ProfessionalController.index");
+  Route.get("professionals/:id", "ProfessionalController.show");
 
-Route.post("schedules", "ScheduleController.index");
+  // professional Schedule Routes
 
-// Rotas do Financeiro
+  Route.resource(
+    "professionalSchedule",
+    "ProfessionalScheduleController"
+  ).apiOnly();
 
-Route.resource("financials", "FinancialController").apiOnly();
+  Route.put("schedules/confirm/:id", "ScheduleController.handleConfirm");
+  Route.put("schedules/cancel/:id", "ScheduleController.handleCancel");
+  Route.put(
+    "schedules/authorization/:id",
+    "ScheduleController.handleAuthorization"
+  );
+  Route.post("schedules", "ScheduleController.index");
+  Route.post("schedules/new", "ScheduleController.store");
 
-Route.get("accounts/options", "AccountController.options");
-Route.resource("accounts", "AccountController").apiOnly();
+  // Rotas do Financeiro
 
-Route.get("types/options", "TypeController.options");
+  Route.resource("financials", "FinancialController").apiOnly();
 
-Route.post("movementCategories", "MovementCategoryController.store");
-Route.get("movementCategories/options", "MovementCategoryController.options");
+  Route.get("accounts/options", "AccountController.options");
+  Route.resource("accounts", "AccountController").apiOnly();
 
-Route.get("creditorsDebtors", "CreditorDebtorController.index");
-Route.get("creditorsDebtors/options", "CreditorDebtorController.options");
-Route.post("creditorsDebtors", "CreditorDebtorController.store");
+  Route.get("types/options", "TypeController.options");
+
+  Route.post("movementCategories", "MovementCategoryController.store");
+  Route.get("movementCategories/options", "MovementCategoryController.options");
+
+  Route.get("creditorsDebtors", "CreditorDebtorController.index");
+  Route.get("creditorsDebtors/options", "CreditorDebtorController.options");
+  Route.post("creditorsDebtors", "CreditorDebtorController.store");
+
+  Route.get("formPayments/options", "FormPaymentController.options");
+  Route.post("formPayments", "FormPaymentController.store");
+}).middleware(["auth"]);

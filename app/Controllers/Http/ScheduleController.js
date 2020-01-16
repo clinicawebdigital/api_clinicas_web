@@ -3,7 +3,9 @@
 const Schedule = use("App/Models/Schedule");
 const ProfessionalSchedule = use("App/Models/ProfessionalSchedule");
 
-const { addMinutes, format, getISODay, parseISO } = require("date-fns");
+const { format } = require("date-fns-tz");
+
+const { addMinutes, getISODay, parseISO } = require("date-fns");
 const { ptBR } = require("date-fns/locale");
 
 class ScheduleController {
@@ -12,7 +14,9 @@ class ScheduleController {
     const options = { locale: ptBR };
 
     // seleciona a data selecionada
-    const data = request.only(["date"]);
+    const data = request.only(["date", "professional_id"]);
+
+    console.log(data);
 
     // pegar o número do dia selecionado
     const currentIsoDay = await getISODay(parseISO(data.date), options);
@@ -22,9 +26,13 @@ class ScheduleController {
     const currentDate = new Date();
 
     const currentSchedule = await Schedule.query()
-      .where("date", currentDate)
+
+      .where("date", data.date)
+
       .with("professional")
       .with("room")
+      .with("patient")
+
       .with("procedure", builder => builder.with("partnership"))
       .fetch();
 
@@ -96,18 +104,31 @@ class ScheduleController {
             item.professional_id == row.professional.id
         );
 
+      /* busca o responsabel */
+
       if (verify) {
-        item.checked = "Marcado";
+        item.id = verify.id;
+        item.status = verify.status;
         item.room = verify.room.name;
-        item.date = format(verify.date, "dd/MM/yyyy", {
-          options
+        item.data = format(verify.date, "dd/MM/yyyy HH:mm", {
+          timeZone: "America/Sao_Paulo"
         });
+
         item.procedure =
           verify.procedure.partnership.name + " - " + verify.procedure.name;
+        item.created_at = format(new Date(verify.created_at), "dd/MM/yyyy", {
+          options
+        });
+        item.first_phone = verify.patient.first_phone;
+        item.key = Math.random();
       } else {
-        item.checked = "Liberado";
+        item.id = null;
+        item.status = "Liberado";
         item.date = "";
         item.procedure = "";
+        item.created_at = "";
+        item.first_phone = "";
+        item.key = Math.random();
       }
 
       return item;
@@ -116,11 +137,89 @@ class ScheduleController {
     return newSchedule;
   }
 
-  async store({ request, response }) {}
+  async store({ request, auth }) {
+    const data = request.only([
+      "patient_id",
+      "professional_id",
+      "value",
+      "value_transferred",
+      "start",
+      "date",
+      "procedure_id",
+      "room_id",
+      "date",
+      "observations"
+    ]);
 
-  async show({ params, request, response, view }) {}
+    const user = await auth.getUser();
+    const schedule = Schedule.create({
+      ...data,
+      status: "Agendado",
+      responsible_id: user.id
+    });
 
-  async update({ params, request, response }) {}
+    return schedule;
+  }
+
+  async handleCancel({ params, response }) {
+    try {
+      const schedule = await Schedule.findOrFail(params.id);
+
+      schedule.merge({
+        status: "Cancelado"
+      });
+
+      await schedule.save();
+      return schedule;
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: "Esse agendamento não existente." } });
+    }
+  }
+
+  async handleAuthorization({ params, request, response }) {
+    try {
+      const data = request.only([
+        "form_payment_id",
+        "value_payment",
+        "observations_payment"
+      ]);
+
+      const schedule = await Schedule.findOrFail(params.id);
+
+      schedule.merge({
+        ...data,
+        status: "Autorizado"
+      });
+
+      await schedule.save();
+      return schedule;
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: "Esse agendamento não existente." } });
+    }
+  }
+
+  async handleConfirm({ params, response }) {
+    try {
+      const schedule = await Schedule.findOrFail(params.id);
+
+      schedule.merge({
+        status: "Confirmado"
+      });
+
+      await schedule.save();
+      return schedule;
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: "Esse agendamento não existente." } });
+    }
+  }
+
+  async status({ params, request, response }) {}
 
   async destroy({ params, request, response }) {}
 }

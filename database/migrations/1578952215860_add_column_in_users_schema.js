@@ -14,7 +14,6 @@ class AddColumnInUsersSchema extends Schema {
         .onUpdate("CASCADE")
         .onDelete("CASCADE")
         .notNullable();
-      table;
     });
   }
 

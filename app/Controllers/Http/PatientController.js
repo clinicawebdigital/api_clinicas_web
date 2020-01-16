@@ -31,7 +31,7 @@ class PatientController {
     return parseOptions;
   }
 
-  async store({ request, response }) {
+  async store({ request }) {
     const data = request.only([
       "name",
       "email",
@@ -67,9 +67,15 @@ class PatientController {
       "schooling_id"
     ]);
 
-    const pacient = await Patient.create(data);
+    const { id, name, date_birth, first_phone } = await Patient.create(data);
 
-    return pacient;
+    return {
+      value: id,
+      label: `${name} - ${format(
+        new Date(date_birth),
+        "dd/MM/yyyy"
+      )} | ${first_phone}`
+    };
   }
 
   async show({ response, params }) {
