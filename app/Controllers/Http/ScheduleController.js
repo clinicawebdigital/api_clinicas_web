@@ -39,7 +39,6 @@ class ScheduleController {
       .with("procedure", builder => builder.with("partnership"));
 
     if (data.professional_id) {
-      console.log("entrei");
       queryCurrentSchedule.andWhere("professional_id", data.professional_id);
     }
 
@@ -269,9 +268,11 @@ class ScheduleController {
       item.created_at = format(new Date(item.created_at), "dd/MM/yyyy", {
         options
       });
+      item.professional_id = item.professional.id;
       item.first_phone = item.patient.first_phone;
       item.key = Math.random();
       item.professional_name = item.professional.name;
+      item.patient_name = verify.patient.name;
 
       return item;
     });
