@@ -272,7 +272,7 @@ class ScheduleController {
       item.first_phone = item.patient.first_phone;
       item.key = Math.random();
       item.professional_name = item.professional.name;
-      item.patient_name = verify.patient.name;
+      item.patient_name = item.patient.name;
 
       return item;
     });
