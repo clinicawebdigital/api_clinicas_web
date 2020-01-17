@@ -36,6 +36,10 @@ class User extends Model {
     return this.belongsTo("App/Models/Professional");
   }
 
+  schedule() {
+    return this.belongsTo("App/Models/Schedule");
+  }
+
   tokens() {
     return this.hasMany("App/Models/Token");
   }

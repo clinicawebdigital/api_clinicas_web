@@ -96,6 +96,7 @@ Route.group(() => {
 
   Route.post("schedules", "ScheduleController.index");
   Route.post("schedules/new", "ScheduleController.store");
+  Route.post("schedules/manually", "ScheduleController.saveScheduleManually");
   Route.post("mySchedules", "ScheduleController.mySchedules");
 
   // Rotas do Financeiro

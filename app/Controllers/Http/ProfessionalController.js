@@ -28,6 +28,8 @@ class ProfessionalController {
     )
       .from("professionals")
       .where("can_selected", true)
+      .whereIn("role_id", [4, 5])
+
       .innerJoin("ocupations", "professionals.ocupation_id", "ocupations.id");
 
     const options = professionals.map(item => {

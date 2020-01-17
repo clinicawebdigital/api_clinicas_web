@@ -17,6 +17,10 @@ class Schedule extends Model {
   patient() {
     return this.belongsTo("App/Models/Patient");
   }
+
+  user() {
+    return this.belongsTo("App/Models/User");
+  }
 }
 
 module.exports = Schedule;

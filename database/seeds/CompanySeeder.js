@@ -41,7 +41,7 @@ class CompanySeeder {
       },
       {
         day: "6",
-        description: "Sábado-feira",
+        description: "Sábado",
         start: "",
         end: ""
       },

@@ -24,29 +24,48 @@ class ScheduleController {
 
     const currentDate = new Date();
 
-    const currentSchedule = await Schedule.query()
+    let queryCurrentSchedule = Schedule.query()
 
       .where("date", data.date)
 
       .with("professional")
+
       .with("room")
       .with("patient")
 
-      .with("procedure", builder => builder.with("partnership"))
-      .fetch();
+      .with("user", builder =>
+        builder.with("professional").setHidden(["password"])
+      )
+      .with("procedure", builder => builder.with("partnership"));
+
+    if (data.professional_id) {
+      console.log("entrei");
+      queryCurrentSchedule.andWhere("professional_id", data.professional_id);
+    }
+
+    const currentSchedule = await queryCurrentSchedule.fetch();
 
     // pega as agenda dos médicos desse dia
 
-    const currentDoctorSchedule = await ProfessionalSchedule.query()
+    let parseCurrentSchedule = currentSchedule.toJSON();
+
+    const queryCurrentDoctorSchedule = ProfessionalSchedule.query()
       .where("day", currentIsoDay)
       .with("professional")
-      .with("room")
-      .fetch();
+      .with("room");
+
+    if (data.professional_id) {
+      queryCurrentDoctorSchedule.andWhere(
+        "professional_id",
+        data.professional_id
+      );
+    }
+
+    const currentDoctorSchedule = await queryCurrentDoctorSchedule.fetch();
 
     const newSchedule = [];
 
     const parseData = currentDoctorSchedule.toJSON();
-
     parseData.map(item => {
       const currentStart = item.start.split(":");
       const currentEnd = item.end.split(":");
@@ -106,13 +125,14 @@ class ScheduleController {
       /* busca o responsabel */
 
       if (verify) {
-        item.responsible = "";
+        item.responsible = verify.user.professional.name;
         item.value_payment = verify.value_payment;
         item.observations_payment = verify.observations_payment;
         item.id = verify.id;
+        item.patient_name = verify.patient.name;
         item.status = verify.status;
         item.room = verify.room.name;
-        item.data = format(verify.date, "dd/MM/yyyy HH:mm", {
+        item.date = format(verify.date, "dd/MM/yyyy", {
           timeZone: "America/Sao_Paulo"
         });
 
@@ -131,7 +151,12 @@ class ScheduleController {
         item.first_phone = verify.patient.first_phone;
         item.key = Math.random();
         item.observations = verify.observations;
+
+        parseCurrentSchedule = parseCurrentSchedule.filter(
+          row => row.id !== verify.id
+        );
       } else {
+        item.patient_name = "";
         item.responsible = "";
         item.id = null;
         item.status = "Liberado";
@@ -148,7 +173,65 @@ class ScheduleController {
       return item;
     });
 
-    return newSchedule;
+    const parseCurrentScheduleTratamento = parseCurrentSchedule.map(item => {
+      item.responsible = item.user.professional.name;
+      item.professional_name = item.professional.name;
+      item.professional_id = item.professional.id;
+      item.value_payment = item.value_payment;
+      item.observations_payment = item.observations_payment;
+      item.id = item.id;
+      item.patient_name = item.patient.name;
+      item.status = item.status;
+      item.room = item.room.name;
+      item.date = format(item.date, "dd/MM/yyyy", {
+        timeZone: "America/Sao_Paulo"
+      });
+
+      item.procedure =
+        item.procedure.partnership.name +
+        " - " +
+        item.procedure.name +
+        " | " +
+        new Intl.NumberFormat("pt-br", {
+          style: "currency",
+          currency: "BRL"
+        }).format(item.procedure.value);
+      item.created_at = format(new Date(item.created_at), "dd/MM/yyyy", {
+        options
+      });
+      item.first_phone = item.patient.first_phone;
+      item.key = Math.random();
+      item.observations = item.observations;
+      return item;
+    });
+
+    return [...newSchedule, ...parseCurrentScheduleTratamento];
+  }
+
+  async saveScheduleManually({ request, auth }) {
+    const data = request.only([
+      "date",
+      "professional_id",
+      "start",
+      "room_id",
+
+      "patient_id",
+
+      "procedure_id",
+      "value",
+      "value_transferred",
+
+      "observations"
+    ]);
+
+    const user = await auth.getUser();
+    const schedule = Schedule.create({
+      ...data,
+      status: "Agendado",
+      user_id: user.id
+    });
+
+    return schedule;
   }
 
   async mySchedules({ request, auth }) {
@@ -164,14 +247,16 @@ class ScheduleController {
 
     const currentSchedule = await Schedule.query()
       .where("date", data.date)
-      .andWhere("professional_id", user.id)
+      .andWhere("professional_id", user.professional_id)
       .with("professional")
       .with("room")
       .with("patient")
       .with("procedure", builder => builder.with("partnership"))
+      .with("user", builder => builder.with("professional"))
       .fetch();
 
     const parseOptions = currentSchedule.toJSON().map(item => {
+      item.responsible = item.user.professional.name;
       item.id = item.id;
       item.status = item.status;
       item.room = item.room.name;
@@ -213,7 +298,7 @@ class ScheduleController {
     const schedule = Schedule.create({
       ...data,
       status: "Agendado",
-      responsible_id: user.id
+      user_id: user.id
     });
 
     return schedule;

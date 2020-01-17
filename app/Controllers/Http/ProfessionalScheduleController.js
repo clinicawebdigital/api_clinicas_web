@@ -108,12 +108,13 @@ class ProfessionalScheduleController {
     const verifyScheduleInDay = await ProfessionalSchedule.query()
       .where("day", data.day)
       .andWhere("room_id", data.room_id)
-      .fetch();
+      .andWhere("start", data.start)
+      .first();
 
-    if (!verifyScheduleInDay) {
+    if (verifyScheduleInDay) {
       return response.status(401).send({
         err: {
-          message: "Esse horário já está ocupado"
+          message: "Esse horário inicial já está ocupado"
         }
       });
     }
