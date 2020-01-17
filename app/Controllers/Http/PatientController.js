@@ -66,7 +66,7 @@ class PatientController {
 
     const patientExists = await Patient.query()
       .where("first_phone", data.first_phone)
-      .orWhere("second_phone", data.second_phone)
+
       .first();
 
     if (!patientExists) {
