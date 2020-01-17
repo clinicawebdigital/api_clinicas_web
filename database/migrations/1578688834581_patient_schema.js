@@ -8,7 +8,7 @@ class PatientSchema extends Schema {
       table.increments();
       table.string("name").notNullable();
       table.string("email");
-      table.date("date_birth").notNullable();
+      table.date("date_birth");
       table.string("age");
       table.string("father_name");
       table.string("mother_name");
@@ -20,6 +20,7 @@ class PatientSchema extends Schema {
       table.text("observations");
       // contatos
       table.string("first_phone").notNullable();
+
       table.string("second_phone");
       table.string("whatsapp");
       //dados de endereco

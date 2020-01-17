@@ -15,23 +15,20 @@ class PatientController {
 
   async options() {
     const options = await Patient.query()
-      .select("id as value ", "name as label", "date_birth", "first_phone")
+      .select("id as value ", "name as label", "first_phone")
       .fetch();
 
     const parseOptions = options.toJSON().map(option => {
       return {
         value: option.value,
-        label: `${option.label} - ${format(
-          option.date_birth,
-          "dd/MM/yyyy"
-        )} | ${option.first_phone}`
+        label: `${option.label} | ${option.first_phone}`
       };
     });
 
     return parseOptions;
   }
 
-  async store({ request }) {
+  async store({ request, response }) {
     const data = request.only([
       "name",
       "email",
@@ -67,15 +64,29 @@ class PatientController {
       "schooling_id"
     ]);
 
-    const { id, name, date_birth, first_phone } = await Patient.create(data);
+    const patientExists = await Indication.query()
+      .where("first_phone", data.first_phone)
+      .orWhere("second_phone", data.second_phone)
+      .first();
 
-    return {
-      value: id,
-      label: `${name} - ${format(
-        new Date(date_birth),
-        "dd/MM/yyyy"
-      )} | ${first_phone}`
-    };
+    if (!patientExists) {
+      const { id, name, date_birth, first_phone } = await Patient.create(data);
+
+      return {
+        value: id,
+        label: `${name} - ${format(
+          new Date(date_birth),
+          "dd/MM/yyyy"
+        )} | ${first_phone}`
+      };
+    } else {
+      return response.status(400).send({
+        err: {
+          message:
+            "Esse telefone já está associado com um paciente já cadastrado."
+        }
+      });
+    }
   }
 
   async show({ response, params }) {
@@ -155,8 +166,6 @@ class PatientController {
 
   async destroy({ params, response }) {
     try {
-      const patient = await Patient.findOrFail(params.id);
-      await patient.delete();
     } catch (err) {
       return response
         .status(err.status)
