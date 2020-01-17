@@ -64,7 +64,7 @@ class PatientController {
       "schooling_id"
     ]);
 
-    const patientExists = await Indication.query()
+    const patientExists = await Patient.query()
       .where("first_phone", data.first_phone)
       .orWhere("second_phone", data.second_phone)
       .first();
