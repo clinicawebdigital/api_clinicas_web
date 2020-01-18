@@ -65,6 +65,7 @@ class ScheduleController {
     const newSchedule = [];
 
     const parseData = currentDoctorSchedule.toJSON();
+
     parseData.map(item => {
       const currentStart = item.start.split(":");
       const currentEnd = item.end.split(":");
@@ -79,7 +80,7 @@ class ScheduleController {
       );
 
       while (
-        i <=
+        i <
         new Date(
           currentDate.getFullYear(),
           currentDate.getMonth(),
@@ -88,15 +89,22 @@ class ScheduleController {
           currentEnd[1]
         )
       ) {
-        newSchedule.push({
-          start: format(i, "HH:mm", {
+        if (
+          format(addMinutes(i, duration), "HH:mm", {
             options
-          }),
-          professional_name: item.professional.name,
-          professional_id: item.professional.id,
-          room_id: item.room.id,
-          room: item.room.name
-        });
+          }) <= item.end
+        ) {
+          newSchedule.push({
+            start: format(i, "HH:mm", {
+              options
+            }),
+            professional_name: item.professional.name,
+            professional_id: item.professional.id,
+            room_id: item.room.id,
+            room: item.room.name
+          });
+        }
+
         const parseDate = addMinutes(
           new Date(
             currentDate.getFullYear(),
@@ -111,6 +119,8 @@ class ScheduleController {
         i = parseDate;
       }
     });
+
+    // retirar horários com mesmo valor no final do dia
 
     newSchedule.map(item => {
       const verify = currentSchedule
