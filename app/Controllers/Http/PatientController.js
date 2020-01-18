@@ -139,24 +139,10 @@ class PatientController {
         "schooling_id"
       ]);
 
-      if (data.cpf) {
-        const patientExists = await Patient.findBy("cpf", data.cpf);
+      patient.merge(data);
+      await patient.save();
 
-        if (!patientExists) {
-          patient.merge(data);
-          await patient.save();
-
-          return patient;
-        } else {
-          return response
-            .status(400)
-            .send({ err: { message: "Esse CPF já está cadastrado." } });
-        }
-      } else {
-        return response
-          .status(400)
-          .send({ err: { message: "CPF é obrigatório." } });
-      }
+      return patient;
     } catch (err) {
       return response
         .status(err.status)
