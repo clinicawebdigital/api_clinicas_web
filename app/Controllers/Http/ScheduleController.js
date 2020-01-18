@@ -89,21 +89,15 @@ class ScheduleController {
           currentEnd[1]
         )
       ) {
-        if (
-          format(addMinutes(i, duration), "HH:mm", {
+        newSchedule.push({
+          start: format(i, "HH:mm", {
             options
-          }) <= item.end
-        ) {
-          newSchedule.push({
-            start: format(i, "HH:mm", {
-              options
-            }),
-            professional_name: item.professional.name,
-            professional_id: item.professional.id,
-            room_id: item.room.id,
-            room: item.room.name
-          });
-        }
+          }),
+          professional_name: item.professional.name,
+          professional_id: item.professional.id,
+          room_id: item.room.id,
+          room: item.room.name
+        });
 
         const parseDate = addMinutes(
           new Date(
