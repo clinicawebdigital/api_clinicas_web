@@ -9,7 +9,8 @@ class ScheduleReportController {
       "startDate",
       "endDate",
       "professional_id",
-      "status"
+      "status",
+      "form_payment_id"
     ]);
 
     let querySchedule = Schedule.query()
@@ -26,12 +27,8 @@ class ScheduleReportController {
       querySchedule.andWhere("status", data.status);
     }
 
-    if (data.status) {
-      querySchedule.andWhere("status", data.status);
-    }
-
     if (data.form_payment_id) {
-      querySchedule.andWhere("form_payment_id", data.status);
+      querySchedule.andWhere("form_payment_id", data.form_payment_id);
     }
 
     const schedule = await querySchedule.fetch();
