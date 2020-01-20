@@ -21,6 +21,10 @@ class Schedule extends Model {
   user() {
     return this.belongsTo("App/Models/User");
   }
+
+  formPayment() {
+    return this.belongsTo("App/Models/FormPayment");
+  }
 }
 
 module.exports = Schedule;

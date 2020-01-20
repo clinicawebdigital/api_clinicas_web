@@ -35,7 +35,7 @@ class ProfessionalController {
     const options = professionals.map(item => {
       return {
         value: item.id,
-        label: `${item.name} - ${item.ocupation}`
+        label: `${item.name}`
       };
     });
 

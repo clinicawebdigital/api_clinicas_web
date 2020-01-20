@@ -89,16 +89,17 @@ class ScheduleController {
           currentEnd[1]
         )
       ) {
-        newSchedule.push({
-          start: format(i, "HH:mm", {
-            options
-          }),
-          professional_name: item.professional.name,
-          professional_id: item.professional.id,
-          room_id: item.room.id,
-          room: item.room.name
-        });
-
+        if (format(addMinutes(i, duration), "HH:mm", { options }) <= item.end) {
+          newSchedule.push({
+            start: format(i, "HH:mm", {
+              options
+            }),
+            professional_name: item.professional.name,
+            professional_id: item.professional.id,
+            room_id: item.room.id,
+            room: item.room.name
+          });
+        }
         const parseDate = addMinutes(
           new Date(
             currentDate.getFullYear(),
@@ -373,6 +374,23 @@ class ScheduleController {
 
       schedule.merge({
         status: "Confirmado"
+      });
+
+      await schedule.save();
+      return schedule;
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: "Esse agendamento não existente." } });
+    }
+  }
+
+  async handlePreConfirm({ params, response }) {
+    try {
+      const schedule = await Schedule.findOrFail(params.id);
+
+      schedule.merge({
+        status: "Pré-Confirmado"
       });
 
       await schedule.save();
