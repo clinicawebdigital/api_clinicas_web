@@ -15,6 +15,8 @@ class ScheduleReportController {
 
     let querySchedule = Schedule.query()
       .with("professional")
+      .with("patient")
+      .with("procedure")
       .with("formPayment")
       .whereBetween("date", [data.startDate, data.endDate])
       .orderBy("date", "asc");
@@ -40,6 +42,8 @@ class ScheduleReportController {
         professional_name: item.professional.name,
         status: item.status,
         value_transferred: item.value_transferred,
+        patient_name: item.patient.name,
+        procedure_name: item.procedure.name,
         value_payment: item.value_payment,
         form_payment: item.formPayment ? item.formPayment.name : "--",
         observations_payment: item.observations_payment
