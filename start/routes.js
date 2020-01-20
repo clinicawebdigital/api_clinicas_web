@@ -7,6 +7,7 @@ const Route = use("Route");
 Route.post("sessions", "SessionController.store");
 
 Route.group(() => {
+  Route.get("users/options", "UserController.options");
   Route.post("users", "UserController.index");
   Route.get("users/:id", "UserController.show");
   Route.put("users/:id", "UserController.update");
@@ -84,7 +85,8 @@ Route.group(() => {
     "professionalSchedule",
     "ProfessionalScheduleController"
   ).apiOnly();
-
+  Route.get("schedules/:id", "ScheduleController.show");
+  Route.put("schedules/:id", "ScheduleController.update");
   Route.put("schedules/confirm/:id", "ScheduleController.handleConfirm");
   Route.put("schedules/cancel/:id", "ScheduleController.handleCancel");
   Route.put("schedules/preConfirm/:id", "ScheduleController.handlePreConfirm");

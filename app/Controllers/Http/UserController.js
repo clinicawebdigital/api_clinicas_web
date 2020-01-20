@@ -11,6 +11,22 @@ class UserController {
     return user;
   }
 
+  async options() {
+    const options = await User.query()
+
+      .with("professional")
+      .fetch();
+
+    const parseOptions = options.toJSON().map(item => {
+      return {
+        value: item.id,
+        label: item.professional.name
+      };
+    });
+
+    return parseOptions;
+  }
+
   async show({ params, response }) {
     try {
       const user = await User.query()

@@ -10,13 +10,17 @@ class ScheduleReportController {
       "endDate",
       "professional_id",
       "status",
-      "form_payment_id"
+      "form_payment_id",
+      "user_id"
     ]);
 
     let querySchedule = Schedule.query()
       .with("professional")
       .with("patient")
       .with("procedure")
+      .with("user", builder =>
+        builder.with("professional").setHidden(["password"])
+      )
       .with("formPayment")
       .whereBetween("date", [data.startDate, data.endDate])
       .orderBy("date", "asc");
@@ -33,9 +37,12 @@ class ScheduleReportController {
       querySchedule.andWhere("form_payment_id", data.form_payment_id);
     }
 
+    if (data.user_id) {
+      querySchedule.andWhere("user_id", data.user_id);
+    }
+
     const schedule = await querySchedule.fetch();
 
-    console.log(schedule.toJSON());
     const parseSchedule = schedule.toJSON().map(item => {
       return {
         date: format(item.date, "dd/MM/yyyy"),
@@ -46,7 +53,8 @@ class ScheduleReportController {
         procedure_name: item.procedure.name,
         value_payment: item.value_payment,
         form_payment: item.formPayment ? item.formPayment.name : "--",
-        observations_payment: item.observations_payment
+        observations_payment: item.observations_payment,
+        user_name: item.user.professional.name
       };
     });
 

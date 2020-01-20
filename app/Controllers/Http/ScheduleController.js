@@ -403,6 +403,36 @@ class ScheduleController {
     }
   }
 
+  async show({ params }) {
+    try {
+      const schedule = await Schedule.query()
+        .where("id", params.id)
+        .with("procedure", builder => builder.with("partnership"))
+        .with("patient")
+        .first();
+      return schedule;
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: "Agendamento não existente." } });
+    }
+  }
+
+  async update({ params, request, response }) {
+    try {
+      const schedule = await Schedule.findOrFail(params.id);
+
+      const data = request.only(["observations"]);
+
+      schedule.merge(data);
+      await schedule.save();
+      return schedule;
+    } catch (err) {
+      return response.status(err.status).send({
+        err: { message: "Esse registro nao está presente no banco de dados." }
+      });
+    }
+  }
   async status({ params, request, response }) {}
 
   async destroy({ params, request, response }) {}
