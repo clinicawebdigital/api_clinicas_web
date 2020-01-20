@@ -133,6 +133,7 @@ class ScheduleController {
         item.value_payment = verify.value_payment;
         item.observations_payment = verify.observations_payment;
         item.id = verify.id;
+        item.patient_id = verify.patient.id;
         item.patient_name = verify.patient.name;
         item.status = verify.status;
         item.room = verify.room.name;
