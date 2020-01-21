@@ -422,7 +422,14 @@ class ScheduleController {
     try {
       const schedule = await Schedule.findOrFail(params.id);
 
-      const data = request.only(["observations"]);
+      const data = request.only([
+        "observations",
+        "procedure_id",
+        "value",
+        "value_transferred",
+        "value_payment",
+        "patient_id"
+      ]);
 
       schedule.merge(data);
       await schedule.save();
