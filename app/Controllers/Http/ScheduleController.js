@@ -433,9 +433,19 @@ class ScheduleController {
       });
     }
   }
+
   async status({ params, request, response }) {}
 
-  async destroy({ params, request, response }) {}
+  async destroy({ params, response }) {
+    try {
+      const schedule = await Schedule.findOrFail(params.id);
+      await schedule.delete();
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ err: { message: "Esse agendamento não existe" } });
+    }
+  }
 }
 
 module.exports = ScheduleController;

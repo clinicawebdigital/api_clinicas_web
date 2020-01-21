@@ -88,6 +88,7 @@ Route.group(() => {
   Route.get("schedules/:id", "ScheduleController.show");
   Route.put("schedules/:id", "ScheduleController.update");
   Route.put("schedules/confirm/:id", "ScheduleController.handleConfirm");
+  Route.put("schedules/delete/:id", "ScheduleController.destroy");
   Route.put("schedules/cancel/:id", "ScheduleController.handleCancel");
   Route.put("schedules/preConfirm/:id", "ScheduleController.handlePreConfirm");
   Route.put(
@@ -125,4 +126,6 @@ Route.group(() => {
   // Relatórios
 
   Route.post("scheduleReport", "ScheduleReportController.index");
+
+  Route.post("marketingReport", "MarketingReportController.index");
 }).middleware(["auth"]);
