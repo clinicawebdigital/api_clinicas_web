@@ -91,7 +91,14 @@ class PatientController {
 
   async show({ response, params }) {
     try {
-      const patient = await Patient.findOrFail(params.id);
+      const patient = await Patient.query()
+        .where("id", params.id)
+        .with("indication")
+        .with("ocupation")
+        .with("race")
+        .with("maritalStatus")
+        .with("schooling")
+        .first();
       return patient;
     } catch (err) {
       return response

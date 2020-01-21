@@ -19,6 +19,10 @@ class Patient extends Model {
   schooling() {
     return this.belongsTo("App/Models/Schooling");
   }
+
+  ocupation() {
+    return this.belongsTo("App/Models/Ocupation");
+  }
 }
 
 module.exports = Patient;
