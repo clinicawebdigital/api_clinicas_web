@@ -45,6 +45,7 @@ class ScheduleReportController {
 
     const parseSchedule = schedule.toJSON().map(item => {
       return {
+        id: item.id,
         date: format(item.date, "dd/MM/yyyy"),
         professional_name: item.professional.name,
         status: item.status,
