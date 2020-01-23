@@ -4,7 +4,12 @@ const Database = use("Database");
 
 class MarketingReportController {
   async index({ request }) {
-    const data = request.only(["startDate", "endDate", , "professional_id"]);
+    const data = request.only([
+      "startDate",
+      "endDate",
+      "professional_id",
+      "status"
+    ]);
 
     const reportQuery = Database.count("patients.indication_id as quantidade")
       .select(
@@ -25,6 +30,10 @@ class MarketingReportController {
 
     if (data.professional_id) {
       reportQuery.where("professional_id", data.professional_id);
+    }
+
+    if (data.status) {
+      reportQuery.andWhere("status", data.status);
     }
 
     if (data.startDate && data.endDate) {
