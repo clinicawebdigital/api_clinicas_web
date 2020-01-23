@@ -1,73 +1,70 @@
 "use strict";
 
-const Schedule = use("App/Models/Schedule");
-const { format } = require("date-fns");
+const Database = use("Database");
 
 class MarketingReportController {
   async index({ request }) {
-    const data = request.only(["startDate", "endDate", , "indication_id"]);
+    const data = request.only(["startDate", "endDate", , "professional_id"]);
 
-    let querySchedule = Schedule.query()
-      .with("patient", builder => {
-        let subQuery = builder.with("indication");
-
-        return subQuery;
+    const reportQuery = Database.count("patients.indication_id as quantidade")
+      .select(
+        "professionals.name as profissional",
+        "indications.name as indicacao"
+      )
+      .table("schedules")
+      .innerJoin("professionals", function() {
+        this.on("professionals.id", "schedules.professional_id");
       })
-      .with("professional")
-      .with("procedure", builder => builder.with("partnership"));
+      .innerJoin("patients", function() {
+        this.on("patients.id", "schedules.patient_id");
+      })
+      .innerJoin("indications", function() {
+        this.on("patients.indication_id", "indications.id");
+      })
+      .groupBy("indications.name", "professionals.name");
 
-    /* if (data.date_birth_start && data.date_birth_end) {
-      querySchedule.whereBetween("date", [
-        data.date_birth_start,
-        data.date_birth_end
-      ]);
-    } */
-
-    const schedule = await querySchedule.orderBy("patient_id", "asc").fetch();
-
-    let filterSchedule = schedule.toJSON();
-
-    if (data.indication_id) {
-      filterSchedule = filterSchedule.filter(
-        item =>
-          item.patient.indication &&
-          item.patient.indication.id == data.indication_id
-      );
+    if (data.professional_id) {
+      reportQuery.where("professional_id", data.professional_id);
     }
 
-    let count = 0;
-    const parseSchedule = filterSchedule.map(item => {
-      count++;
-      return {
-        count,
-        id: item.id,
-        status: item.status,
-        start: item.start,
-        date: item.date ? format(item.date, "dd/MM/yyyy") : "--",
-        professional_name: item.professional.name,
-        neighborhood: item.patient.neighborhood,
-        patient_name: item.patient.name,
-        patient_date_birth: item.patient.date_birth
-          ? format(item.patient.date_birth, "dd/MM/yyyy")
-          : "--",
+    if (data.startDate && data.endDate) {
+      reportQuery.whereBetween("date", [data.startDate, data.endDate]);
+    }
 
-        patient_email: item.patient.email,
-        patient_first_phone: item.patient.first_phone,
-        patient_second_phone: item.patient.second_phone,
+    const report = await reportQuery;
 
-        patient_instagram: item.patient.instagram,
-        patient_whatsapp: item.patient.whatsapp,
+    let result = [];
 
-        indication_name: item.patient.indication
-          ? item.patient.indication.name
-          : "--",
-        procedure_name: item.procedure
-          ? item.procedure.name + " | " + item.procedure.partnership.name
-          : "--"
-      };
-    });
+    for (let i = 0; i < report.length; i++) {
+      var professionalExists = false;
+      for (let j = 0; j < i; j++) {
+        if (result[j] && report[i].profissional == result[j].profissional) {
+          result[j].indicacoes.push({
+            indicacao: report[i].indicacao,
+            quantidade: report[i].quantidade
+          });
+          professionalExists = true;
+          break;
+        }
+      }
 
-    return parseSchedule;
+      if (!professionalExists) {
+        result.push({
+          profissional: report[i].profissional,
+          indicacoes: [
+            {
+              indicacao: report[i].indicacao,
+              quantidade: report[i].quantidade
+            }
+          ]
+        });
+      }
+    }
+
+    return {
+      data: report,
+      pdf: result
+    };
   }
 }
 module.exports = MarketingReportController;
