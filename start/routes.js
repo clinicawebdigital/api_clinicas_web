@@ -7,6 +7,7 @@ const Route = use("Route");
 Route.post("sessions", "SessionController.store");
 
 Route.group(() => {
+  Route.get("history/:id", "HistoryController.index");
   Route.get("users/options", "UserController.options");
   Route.post("users", "UserController.index");
   Route.get("users/:id", "UserController.show");
