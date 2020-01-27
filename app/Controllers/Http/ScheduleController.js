@@ -298,7 +298,8 @@ class ScheduleController {
       "procedure_id",
       "room_id",
       "date",
-      "observations"
+      "observations",
+      "indication_id"
     ]);
 
     const user = await auth.getUser();
