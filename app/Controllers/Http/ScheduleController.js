@@ -410,6 +410,7 @@ class ScheduleController {
         .where("id", params.id)
         .with("procedure", builder => builder.with("partnership"))
         .with("patient")
+        .with("indication")
         .first();
       return schedule;
     } catch (err) {

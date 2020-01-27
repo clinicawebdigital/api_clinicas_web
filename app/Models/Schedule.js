@@ -22,6 +22,10 @@ class Schedule extends Model {
     return this.belongsTo("App/Models/User");
   }
 
+  indication() {
+    return this.belongsTo("App/Models/Indication");
+  }
+
   formPayment() {
     return this.belongsTo("App/Models/FormPayment");
   }
