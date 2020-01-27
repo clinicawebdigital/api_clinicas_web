@@ -430,7 +430,8 @@ class ScheduleController {
         "value",
         "value_transferred",
         "value_payment",
-        "patient_id"
+        "patient_id",
+        "indication_id"
       ]);
 
       schedule.merge(data);
