@@ -4,7 +4,13 @@ const Database = use("Database");
 
 class ProceduresReportController {
   async index({ request }) {
-    const data = request.only(["professional_id", "procedure_id", "status"]);
+    const data = request.only([
+      "startDate",
+      "endDate",
+      "professional_id",
+      "procedure_id",
+      "status"
+    ]);
 
     const reportQuery = Database.select(
       "professionals.name as profissional",
@@ -19,7 +25,8 @@ class ProceduresReportController {
       .innerJoin("procedures", function() {
         this.on("procedures.id", "schedules.procedure_id");
       })
-      .where("schedules.professional_id", data.professional_id);
+      .where("schedules.professional_id", data.professional_id)
+      .whereBetween("schedules.date", [data.startDate, data.endDate]);
 
     if (data.procedure_id)
       reportQuery.andWhere("schedules.procedure_id", data.procedure_id);
@@ -28,7 +35,8 @@ class ProceduresReportController {
 
     const report = await reportQuery
       .groupBy("professionals.name", "procedures.name")
-      .orderBy("professionals.name");
+      .orderBy("professionals.name")
+      .toSQL();
 
     return report;
   }
