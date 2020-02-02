@@ -130,4 +130,5 @@ Route.group(() => {
   Route.post("proceduresReport", "ProceduresReportController.index");
 
   Route.post("marketingReport", "MarketingReportController.index");
+  Route.post("financialReport", "FinancialReportController.index");
 }).middleware(["auth"]);
