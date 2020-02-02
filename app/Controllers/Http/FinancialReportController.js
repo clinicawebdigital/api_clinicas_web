@@ -69,7 +69,7 @@ class FinancialReportController {
 
     const report = await reportQuery.orderBy("financials.date");
 
-    const parseOptions = report.map(item => {
+    const parseData = report.map(item => {
       item.transaction_type =
         item.transaction_type === "1" ? "Entrada" : "Saída";
       item.date = format(item.date, "dd/MM/yyyy", {
@@ -78,7 +78,7 @@ class FinancialReportController {
       return item;
     });
 
-    return parseOptions;
+    return parseData;
   }
 }
 module.exports = FinancialReportController;
