@@ -35,9 +35,7 @@ class ProceduresReportController {
 
     const report = await reportQuery
       .groupBy("professionals.name", "procedures.name")
-      .orderBy("professionals.name")
-      .toSQL();
-
+      .orderBy("professionals.name");
     return report;
   }
 }
