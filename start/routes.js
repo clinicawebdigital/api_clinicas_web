@@ -127,6 +127,7 @@ Route.group(() => {
   // Relatórios
 
   Route.post("scheduleReport", "ScheduleReportController.index");
+  Route.post("proceduresReport", "ProceduresReportController.index");
 
   Route.post("marketingReport", "MarketingReportController.index");
 }).middleware(["auth"]);
