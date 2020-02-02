@@ -26,22 +26,25 @@ class MarketingReportController {
       })
       .innerJoin("indications", function() {
         this.on("schedules.indication_id", "indications.id");
-      })
-      .groupBy("indications.name", "professionals.name", "procedures.name");
+      });
+    if (data.startDate && data.endDate) {
+      reportQuery.whereBetween("schedules.date", [
+        data.startDate,
+        data.endDate
+      ]);
+    }
 
     if (data.professional_id) {
-      reportQuery.where("professional_id", data.professional_id);
+      reportQuery.where("schedules.professional_id", data.professional_id);
     }
 
     if (data.status) {
-      reportQuery.andWhere("status", data.status);
+      reportQuery.where("schedules.status", data.status);
     }
 
-    if (data.startDate && data.endDate) {
-      reportQuery.whereBetween("date", [data.startDate, data.endDate]);
-    }
-
-    const report = await reportQuery.orderBy("professionals.name");
+    const report = await reportQuery
+      .groupBy("indications.name", "professionals.name", "procedures.name")
+      .orderBy("professionals.name");
 
     /* 
     let result = [];
