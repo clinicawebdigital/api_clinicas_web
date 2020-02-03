@@ -36,7 +36,12 @@ class ProceduresReportController {
     const report = await reportQuery
       .groupBy("professionals.name", "procedures.name")
       .orderBy("professionals.name");
-    return report;
+
+    const parseData = report.map(item => {
+      item.id = Math.random();
+      return item;
+    });
+    return parseData;
   }
 }
 module.exports = ProceduresReportController;
