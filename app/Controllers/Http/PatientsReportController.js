@@ -19,6 +19,7 @@ class PatientsReportController {
     ]);
 
     const reportQuery = Database.select(
+      "schedules.id",
       "schedules.created_at as criada",
       "schedules.date as agendada",
       "schedules.status",
