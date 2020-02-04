@@ -79,8 +79,11 @@ class MarketingReportController {
       data: report,
       pdf: result
     };*/
-
-    return report;
+    const parseData = report.map(item => {
+      item.id = Math.random();
+      return item;
+    });
+    return parseData;
   }
 }
 module.exports = MarketingReportController;
